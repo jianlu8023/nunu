@@ -1,4 +1,5 @@
 ## Documentação
+
 * [Guia do Usuário](https://github.com/go-nunu/nunu/blob/main/docs/pt/guide.md)
 * [Arquitetura](https://github.com/go-nunu/nunu/blob/main/docs/pt/architecture.md)
 * [Tutorial de Início Rápido](https://github.com/go-nunu/nunu/blob/main/docs/pt/tutorial.md)
@@ -9,12 +10,13 @@
 
 # Explorando a Arquitetura do Nunu
 
-O Nunu adota uma arquitetura em camadas clássica. Além disso, para alcançar uma melhor modularidade e desacoplamento, ele utiliza o framework de injeção de dependência `Wire`.
-
+O Nunu adota uma arquitetura em camadas clássica. Além disso, para alcançar uma melhor modularidade e desacoplamento,
+ele utiliza o framework de injeção de dependência `Wire`.
 
 ![Nunu Layout](https://github.com/go-nunu/nunu/blob/main/.github/assets/layout.png)
 
 ## Estrutura de Diretórios
+
 ```
 .
 ├── api
@@ -48,7 +50,6 @@ O Nunu adota uma arquitetura em camadas clássica. Além disso, para alcançar u
 └── go.sum
 ```
 
-
 - `cmd`: Ponto de entrada da aplicação, contendo diferentes subcomandos.
 - `config`: Arquivos de configuração.
 - `deploy`: Arquivos relacionados à implantação, como Dockerfile e docker-compose.yml.
@@ -61,19 +62,27 @@ O Nunu adota uma arquitetura em camadas clássica. Além disso, para alcançar u
 
 ## internal
 
-- `internal/handler` (ou `controller`): Lida com solicitações HTTP, chama serviços na camada de lógica de negócios e retorna respostas HTTP.
+- `internal/handler` (ou `controller`): Lida com solicitações HTTP, chama serviços na camada de lógica de negócios e
+  retorna respostas HTTP.
 - `internal/server` (ou `router`): Servidor HTTP que inicia o serviço HTTP, ouve portas e lida com solicitações HTTP.
-- `internal/service` (ou `logic`): Serviços que implementam lógica de negócios específica e chamam a camada de acesso aos dados (repositório).
-- `internal/model` (ou `entity`): Modelos de dados que definem as estruturas de dados necessárias pela camada de lógica de negócios.
-- `internal/repository` (ou `dao`): Objetos de acesso aos dados que encapsulam operações de banco de dados e fornecem operações CRUD nos dados.
+- `internal/service` (ou `logic`): Serviços que implementam lógica de negócios específica e chamam a camada de acesso
+  aos dados (repositório).
+- `internal/model` (ou `entity`): Modelos de dados que definem as estruturas de dados necessárias pela camada de lógica
+  de negócios.
+- `internal/repository` (ou `dao`): Objetos de acesso aos dados que encapsulam operações de banco de dados e fornecem
+  operações CRUD nos dados.
 
 ## Injeção de Dependência
 
-Este projeto utiliza o framework de injeção de dependência `Wire` para alcançar modularidade e desacoplamento. `Wire` gera código de injeção de dependência `wire_gen.go` pré-compilando `wire.go`, simplificando o processo de injeção de dependência.
+Este projeto utiliza o framework de injeção de dependência `Wire` para alcançar modularidade e desacoplamento. `Wire`
+gera código de injeção de dependência `wire_gen.go` pré-compilando `wire.go`, simplificando o processo de injeção de
+dependência.
 
 - `cmd/job/wire.go`: Arquivo de configuração do `Wire` que define as dependências necessárias pelo subcomando `job`.
-- `cmd/migration/wire.go`: Arquivo de configuração do `Wire` que define as dependências necessárias pelo subcomando `migration`.
-- `cmd/server/wire.go`: Arquivo de configuração do `Wire` que define as dependências necessárias pelo subcomando `server`.
+- `cmd/migration/wire.go`: Arquivo de configuração do `Wire` que define as dependências necessárias pelo
+  subcomando `migration`.
+- `cmd/server/wire.go`: Arquivo de configuração do `Wire` que define as dependências necessárias pelo
+  subcomando `server`.
 
 Documentação oficial do Wire: https://github.com/google/wire/blob/main/docs/guide.md
 
@@ -81,7 +90,8 @@ Nota: O arquivo `wire_gen.go` é gerado automaticamente durante a compilação e
 
 ## Código Comum
 
-Para alcançar a reutilização de código e gerenciamento centralizado, este projeto adota uma abordagem de código comum, onde algum código comum é colocado no diretório `pkg`.
+Para alcançar a reutilização de código e gerenciamento centralizado, este projeto adota uma abordagem de código comum,
+onde algum código comum é colocado no diretório `pkg`.
 
 - `pkg/config`: Lida com a leitura e análise de arquivos de configuração.
 - `pkg/helper`: Contém várias funções utilitárias, como criptografia MD5 e geração de UUID.

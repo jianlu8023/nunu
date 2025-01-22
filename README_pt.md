@@ -1,8 +1,12 @@
 # Nunu - Uma ferramenta de linha de comando (CLI) para construir aplicações em Go.
 
-Nunu é uma ferramenta de geração de estrutura (scaffolding) para construir aplicações em Go. Seu nome vem de um personagem de um jogo chamado League of Legends, um garotinho montado nos ombros de um Yeti. Assim como Nunu, este projeto se apoia nos ombros de gigantes, pois é construído sobre uma combinação de bibliotecas populares do ecossistema Go. Essa combinação permite que você construa rapidamente aplicações eficientes e confiáveis.
+Nunu é uma ferramenta de geração de estrutura (scaffolding) para construir aplicações em Go. Seu nome vem de um
+personagem de um jogo chamado League of Legends, um garotinho montado nos ombros de um Yeti. Assim como Nunu, este
+projeto se apoia nos ombros de gigantes, pois é construído sobre uma combinação de bibliotecas populares do ecossistema
+Go. Essa combinação permite que você construa rapidamente aplicações eficientes e confiáveis.
 
-🚀Dicas: Este projeto é muito completo, então as atualizações não serão muito frequentes. Sinta-se à vontade para utilizá-lo.
+🚀Dicas: Este projeto é muito completo, então as atualizações não serão muito frequentes. Sinta-se à vontade para
+utilizá-lo.
 
 - [简体中文介绍](https://github.com/go-nunu/nunu/blob/main/README_zh.md)
 - [Português](https://github.com/go-nunu/nunu/blob/main/README_pt.md)
@@ -10,13 +14,14 @@ Nunu é uma ferramenta de geração de estrutura (scaffolding) para construir ap
 ![Nunu](https://github.com/go-nunu/nunu/blob/main/.github/assets/banner.png)
 
 ## Documentação
+
 * [Guia do Usuário](https://github.com/go-nunu/nunu/blob/main/docs/pt/guide.md)
 * [Arquitetura](https://github.com/go-nunu/nunu/blob/main/docs/pt/architecture.md)
 * [Tutorial de Início Rápido](https://github.com/go-nunu/nunu/blob/main/docs/pt/tutorial.md)
 * [Teste de Unidade](https://github.com/go-nunu/nunu/blob/main/docs/pt/unit_testing.md)
 
-
 ## Funcionalidades
+
 - **Gin**: https://github.com/gin-gonic/gin
 - **Gorm**: https://github.com/go-gorm/gorm
 - **Wire**: https://github.com/google/wire
@@ -34,14 +39,24 @@ Nunu é uma ferramenta de geração de estrutura (scaffolding) para construir ap
 - Mais...
 
 ## Funcionalidades Principais
-* **Curva de Aprendizado Baixa e Personalização**: Nunu encapsula bibliotecas populares que os Gophers estão familiarizados, permitindo que você customize facilmente a aplicação para atender a requisitos específicos.
-* **Alto Desempenho e Escalabilidade**: Nunu tem como objetivo ser de alto desempenho e escalável. Ele utiliza as tecnologias mais recentes e as melhores práticas para garantir que sua aplicação possa lidar com alto tráfego e grandes quantidades de dados.
-* **Segurança e Confiabilidade**: O Nunu utiliza bibliotecas de terceiros estáveis e confiáveis para garantir a segurança e confiabilidade da sua aplicação.
-* **Modular e Extensível**: O Nunu foi projetado para ser modular e extensível. Você pode facilmente adicionar novos recursos e funcionalidades usando bibliotecas de terceiros ou escrevendo seus próprios módulos.
-* **Documentação Completa e Testes**: O Nunu possui documentação completa e testes abrangentes. Ele oferece documentação extensa e exemplos para ajudá-lo a começar rapidamente. Também inclui um conjunto de testes para garantir que sua aplicação funcione conforme o esperado.
+
+* **Curva de Aprendizado Baixa e Personalização**: Nunu encapsula bibliotecas populares que os Gophers estão
+  familiarizados, permitindo que você customize facilmente a aplicação para atender a requisitos específicos.
+* **Alto Desempenho e Escalabilidade**: Nunu tem como objetivo ser de alto desempenho e escalável. Ele utiliza as
+  tecnologias mais recentes e as melhores práticas para garantir que sua aplicação possa lidar com alto tráfego e
+  grandes quantidades de dados.
+* **Segurança e Confiabilidade**: O Nunu utiliza bibliotecas de terceiros estáveis e confiáveis para garantir a
+  segurança e confiabilidade da sua aplicação.
+* **Modular e Extensível**: O Nunu foi projetado para ser modular e extensível. Você pode facilmente adicionar novos
+  recursos e funcionalidades usando bibliotecas de terceiros ou escrevendo seus próprios módulos.
+* **Documentação Completa e Testes**: O Nunu possui documentação completa e testes abrangentes. Ele oferece documentação
+  extensa e exemplos para ajudá-lo a começar rapidamente. Também inclui um conjunto de testes para garantir que sua
+  aplicação funcione conforme o esperado.
 
 ## Arquitetura em Camadas Concisa
-O Nunu adota uma arquitetura em camadas clássica. Para alcançar modularidade e desacoplamento, ele utiliza o framework de injeção de dependência `Wire`.
+
+O Nunu adota uma arquitetura em camadas clássica. Para alcançar modularidade e desacoplamento, ele utiliza o framework
+de injeção de dependência `Wire`.
 
 ![Nunu Layout](https://github.com/go-nunu/nunu/blob/main/.github/assets/layout.png)
 
@@ -49,8 +64,8 @@ O Nunu adota uma arquitetura em camadas clássica. Para alcançar modularidade e
 
 ![Nunu](https://github.com/go-nunu/nunu/blob/main/.github/assets/screenshot.jpg)
 
-
 ## Estrutura de Diretórios
+
 ```
 .
 ├── api
@@ -87,25 +102,31 @@ O Nunu adota uma arquitetura em camadas clássica. Para alcançar modularidade e
 
 A arquitetura do projeto segue uma estrutura em camadas típica, consistindo nos seguintes módulos:
 
-* `cmd`: Este módulo contém os pontos de entrada da aplicação, que realizam diferentes operações com base em comandos diferentes, como iniciar o servidor ou executar migrações de banco de dados. Cada submódulo tem um arquivo `main.go` como arquivo de entrada, além dos arquivos `wire.go` e `wire_gen.go` para injeção de dependência.
+* `cmd`: Este módulo contém os pontos de entrada da aplicação, que realizam diferentes operações com base em comandos
+  diferentes, como iniciar o servidor ou executar migrações de banco de dados. Cada submódulo tem um arquivo `main.go`
+  como arquivo de entrada, além dos arquivos `wire.go` e `wire_gen.go` para injeção de dependência.
 
-* `config`: Este módulo contém os arquivos de configuração da aplicação, fornecendo diferentes configurações para ambientes diferentes, como desenvolvimento e produção.
+* `config`: Este módulo contém os arquivos de configuração da aplicação, fornecendo diferentes configurações para
+  ambientes diferentes, como desenvolvimento e produção.
 
 * `deploy`: Este módulo é usado para implantar a aplicação e inclui scripts de implantação e arquivos de configuração.
 
 * `internal`: Este módulo é o módulo central da aplicação e contém a implementação de várias lógicas de negócios.
 
-  - `handler`: Este submódulo contém os manipuladores para lidar com solicitações HTTP, responsáveis por receber solicitações e invocar os serviços correspondentes para processamento.
+    - `handler`: Este submódulo contém os manipuladores para lidar com solicitações HTTP, responsáveis por receber
+      solicitações e invocar os serviços correspondentes para processamento.
 
-  - `job`: Este submódulo contém a lógica para tarefas em segundo plano.
+    - `job`: Este submódulo contém a lógica para tarefas em segundo plano.
 
-  - `model`: Este submódulo contém a definição de modelos de dados.
+    - `model`: Este submódulo contém a definição de modelos de dados.
 
-  - `repository`: Este submódulo contém a implementação da camada de acesso a dados, responsável por interagir com o banco de dados.
+    - `repository`: Este submódulo contém a implementação da camada de acesso a dados, responsável por interagir com o
+      banco de dados.
 
-  - `server`: Este submódulo contém a implementação do servidor HTTP.
+    - `server`: Este submódulo contém a implementação do servidor HTTP.
 
-  - `service`: Este submódulo contém a implementação da lógica de negócios, responsável por lidar com operações de negócios específicas.
+    - `service`: Este submódulo contém a implementação da lógica de negócios, responsável por lidar com operações de
+      negócios específicas.
 
 * `pkg`: Este módulo contém algumas utilidades e funções comuns.
 
@@ -117,9 +138,12 @@ A arquitetura do projeto segue uma estrutura em camadas típica, consistindo nos
 
 * `web`: Este módulo contém os arquivos relacionados ao frontend, como HTML, CSS e JavaScript.
 
-Além disso, existem outros arquivos e diretórios, como arquivos de licença, arquivos de construção e README. No geral, a arquitetura do projeto é clara, com responsabilidades claras para cada módulo, facilitando o entendimento e a manutenção.
+Além disso, existem outros arquivos e diretórios, como arquivos de licença, arquivos de construção e README. No geral, a
+arquitetura do projeto é clara, com responsabilidades claras para cada módulo, facilitando o entendimento e a
+manutenção.
 
 ## Requisitos
+
 Para usar o Nunu, você precisa ter o seguinte software instalado em seu sistema:
 
 * Go 1.19 ou superior
@@ -136,7 +160,8 @@ Você pode instalar o Nunu com o seguinte comando:
 go install github.com/go-nunu/nunu@latest
 ```
 
-> Dicas: Se `go install` for bem-sucedido, mas o comando `nunu` não é reconhecido, é porque a variável de ambiente não está configurada. Você pode adicionar o diretório GOBIN à variável de ambiente.
+> Dicas: Se `go install` for bem-sucedido, mas o comando `nunu` não é reconhecido, é porque a variável de ambiente não
+> está configurada. Você pode adicionar o diretório GOBIN à variável de ambiente.
 
 ## Criar um Novo Projeto
 
@@ -167,12 +192,15 @@ nunu create service user
 nunu create repository user
 nunu create model user
 ```
+
 ou
+
 ```bash
 nunu create all user
 ```
 
-Estes comandos criarão os componentes com os nomes `UserHandler`, `UserService`, `UserRepository` e `UserModel`, respectivamente, e os colocarão nos diretórios corretos.
+Estes comandos criarão os componentes com os nomes `UserHandler`, `UserService`, `UserRepository` e `UserModel`,
+respectivamente, e os colocarão nos diretórios corretos.
 
 ### Executar o Projeto
 
@@ -182,7 +210,8 @@ Você pode iniciar rapidamente o projeto com o seguinte comando:
 nunu run
 ```
 
-Este comando iniciará o seu projeto em Go e oferecerá suporte a recarregamento automático (hot-reloading) quando os arquivos forem atualizados.
+Este comando iniciará o seu projeto em Go e oferecerá suporte a recarregamento automático (hot-reloading) quando os
+arquivos forem atualizados.
 
 ### Compilar wire.go
 
@@ -196,7 +225,8 @@ Este comando irá compilar o seu `arquivo` wire.go e gerar as dependências nece
 
 ## Contribuição
 
-Se encontrar algum problema ou tiver sugestões de melhoria, sinta-se à vontade para abrir um problema ou enviar um pull request. Suas contribuições são altamente apreciadas!
+Se encontrar algum problema ou tiver sugestões de melhoria, sinta-se à vontade para abrir um problema ou enviar um pull
+request. Suas contribuições são altamente apreciadas!
 
 ## Licença
 

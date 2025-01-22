@@ -1,15 +1,16 @@
 ## Documentation
+
 * [User Guide](https://github.com/go-nunu/nunu/blob/main/docs/en/guide.md)
 * [Architecture](https://github.com/go-nunu/nunu/blob/main/docs/en/architecture.md)
 * [Getting Started Tutorial](https://github.com/go-nunu/nunu/blob/main/docs/en/tutorial.md)
 * [Unit Testing](https://github.com/go-nunu/nunu/blob/main/docs/en/unit_testing.md)
 
-
 [Switch to Chinese version](https://github.com/go-nunu/nunu/blob/main/docs/zh/guide.md)
 
 # Nunu User Guide
 
-Nunu is an application scaffolding based on Golang that helps you quickly build efficient and reliable applications. This guide will show you how to use Nunu to create and develop your applications.
+Nunu is an application scaffolding based on Golang that helps you quickly build efficient and reliable applications.
+This guide will show you how to use Nunu to create and develop your applications.
 
 ## Installation
 
@@ -19,7 +20,8 @@ You can install Nunu using the following command:
 go install github.com/go-nunu/nunu@latest
 ```
 
-> Tip: If `go install` is successful but the `nunu` command is not found, it is because the environment variable is not configured. You can configure the `GOBIN` directory in the environment variable.
+> Tip: If `go install` is successful but the `nunu` command is not found, it is because the environment variable is not
+> configured. You can configure the `GOBIN` directory in the environment variable.
 
 ## Creating a New Project
 
@@ -36,21 +38,25 @@ This command will create a directory named `projectName` and generate an elegant
 
 * **Basic Layout**
 
-The Basic Layout contains a minimalistic directory structure and is suitable for developers who are already familiar with Nunu projects.
+The Basic Layout contains a minimalistic directory structure and is suitable for developers who are already familiar
+with Nunu projects.
 
 * **Advanced Layout**
 
 **Recommendation: We recommend beginners to choose the Advanced Layout first.**
 
-The Advanced Layout includes many examples of using Nunu (e.g., db, redis, jwt, cron, migration, etc.), which is suitable for developers to quickly learn and understand the architectural ideas of Nunu.
+The Advanced Layout includes many examples of using Nunu (e.g., db, redis, jwt, cron, migration, etc.), which is
+suitable for developers to quickly learn and understand the architectural ideas of Nunu.
 
 * **Chat Layout**
 
-Chat Layout is a Nunu based long link project template suitable for scenarios such as instant messaging and game development.
+Chat Layout is a Nunu based long link project template suitable for scenarios such as instant messaging and game
+development.
 
 ## Quick Start with Docker
 
-If you want to quickly try out the Nunu advanced layout, we recommend using the following commands to start the project quickly:
+If you want to quickly try out the Nunu advanced layout, we recommend using the following commands to start the project
+quickly:
 
 ```
 cd ./deploy/docker-compose && docker compose up -d && cd ../../
@@ -68,7 +74,8 @@ make bootstrap
 
 ## Creating Components
 
-You can use the following commands to create components such as handler, service, repository, and model for your project:
+You can use the following commands to create components such as handler, service, repository, and model for your
+project:
 
 ```bash
 nunu create handler user
@@ -77,9 +84,11 @@ nunu create repository user
 nunu create model user
 ```
 
-These commands will create components named `UserHandler`, `UserService`, `UserRepository`, and `UserModel`, and place them in the correct directories.
+These commands will create components named `UserHandler`, `UserService`, `UserRepository`, and `UserModel`, and place
+them in the correct directories.
 
 If you want to create the corresponding components in a custom directory, you can do so as follows:
+
 ```bash
 nunu create handler internal/handler/user/center
 nunu create service internal/service/user/center
@@ -119,9 +128,11 @@ This command will automatically search for the `wire.go` file in your project an
 ## Configuration File
 
 ### Starting with a Specific Configuration File
+
 Nunu uses the Viper library to manage configuration files.
 
-By default, it loads `config/local.yml`, but you can specify the configuration file path using environment variables or parameters.
+By default, it loads `config/local.yml`, but you can specify the configuration file path using environment variables or
+parameters.
 
 ```
 // Linux or MacOS
@@ -130,6 +141,7 @@ APP_CONF=config/prod.yml nunu run
 // Windows
 set APP_CONF=config\prod.yml && nunu run
 ```
+
 Alternatively, you can use the parameter approach: `go run ./cmd/server -conf=config/prod.yml`
 
 ### Reading Configuration Items
@@ -205,7 +217,9 @@ func NewRedis(conf *viper.Viper) *redis.Client {
 
 
 ```
-Tip: After performing dependency injection through parameters, don't forget to execute the `nunu wire` command to generate the dependency file.
+
+Tip: After performing dependency injection through parameters, don't forget to execute the `nunu wire` command to
+generate the dependency file.
 
 ## Logging
 
@@ -295,9 +309,12 @@ func (r *userRepository) FirstById(id int64) (*model.User, error) {
 
 ```
 
-It is important to note that `xxxRepository`, `xxxService`, `xxxHandler`, etc. in Nunu are implemented based on interfaces. This is known as **interface-oriented programming**, which can improve code flexibility, scalability, testability, and maintainability. It is a programming style highly recommended in the Go language.
+It is important to note that `xxxRepository`, `xxxService`, `xxxHandler`, etc. in Nunu are implemented based on
+interfaces. This is known as **interface-oriented programming**, which can improve code flexibility, scalability,
+testability, and maintainability. It is a programming style highly recommended in the Go language.
 
 In the above code, we wrote:
+
 ```
 type UserRepository interface {
 	FirstById(id int64) (*model.User, error)
@@ -306,12 +323,15 @@ type userRepository struct {
 	*Repository
 }
 ```
+
 instead of directly writing:
+
 ```
 type UserRepository struct {
 	*Repository
 }
 ```
+
 > Tip: The unit tests in the Nunu advanced layout are based on the characteristics of `interface` for mock operations.
 
 ## Testing
@@ -326,8 +346,10 @@ go tool cover -html=./.nunu/coverage.out -o coverage.html
 
 ```
 
-The above command will generate an HTML file named `coverage.html`. You can open it directly in a browser to view detailed unit test coverage.
+The above command will generate an HTML file named `coverage.html`. You can open it directly in a browser to view
+detailed unit test coverage.
 
 ## Conclusion
 
-Nunu is a practical Golang application scaffolding that helps you quickly build efficient and reliable applications. We hope this guide can help you make better use of Nunu.
+Nunu is a practical Golang application scaffolding that helps you quickly build efficient and reliable applications. We
+hope this guide can help you make better use of Nunu.

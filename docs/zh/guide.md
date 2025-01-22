@@ -1,9 +1,9 @@
 ## 文档
+
 * [使用指南](https://github.com/go-nunu/nunu/blob/main/docs/zh/guide.md)
 * [分层架构](https://github.com/go-nunu/nunu/blob/main/docs/zh/architecture.md)
 * [详细教程](https://github.com/go-nunu/nunu/blob/main/docs/zh/tutorial.md)
 * [高效编写单元测试](https://github.com/go-nunu/nunu/blob/main/docs/zh/unit_testing.md)
-
 
 [进入英文版](https://github.com/go-nunu/nunu/blob/main/docs/en/guide.md)
 
@@ -43,6 +43,7 @@ nunu new projectName
 **国内加速源：**
 
 `nunu new`默认拉取github源，你也可以使用国内加速仓库
+
 ```
 // 使用高级模板(推荐)
 nunu new projectName -r https://gitee.com/go-nunu/nunu-layout-advanced.git
@@ -55,8 +56,6 @@ nunu new projectName -r https://gitee.com/go-nunu/nunu-layout-chat.git
 
 ```
 
-
-
 > Nunu内置了三种类型的Layout：
 
 * **基础模板(Basic Layout)**
@@ -67,17 +66,16 @@ Basic Layout 包含一个非常精简的架构目录结构，适合非常熟悉N
 
 **建议：我们推荐新手优先选择使用Advanced Layout。**
 
-
 Advanced Layout 包含了很多Nunu的用法示例（ db、redis、 jwt、 cron、 migration等），适合开发者快速学习了解Nunu的架构思想。
 
 * **即时通信模板(Chat Layout)**
 
 Chat Layout 是一个基于Nunu的长链接项目模板，适合适合即时通信、游戏开发等场景。
 
-
 ## 使用docker快速启动项目
 
 如果你想快速尝试nunu高级layout，推荐使用如下命令快速启动
+
 ```
 cd ./deploy/docker-compose && docker compose up -d && cd ../../
 
@@ -85,7 +83,9 @@ go run ./cmd/migration
 
 nunu run ./cmd/server
 ```
+
 或者直接使用make命令
+
 ```
 make bootstrap
 ```
@@ -104,13 +104,13 @@ nunu create model user
 这些命令将分别创建一个名为 `UserHandler`、`UserService` 、 `UserRepository` 和 `UserModel` 的组件，并将它们放置在正确的目录中。
 
 如果你想在自定义的目录创建相应组件则可以这么做：
+
 ```bash
 nunu create handler internal/handler/user/center
 nunu create service internal/service/user/center
 nunu create repository internal/repository/user/center
 nunu create model internal/model/user/center
 ```
-
 
 你还可以使用以下命令一次性创建 handler、service、repository 和 model 等组件：
 
@@ -144,6 +144,7 @@ nunu wire
 ## 配置文件
 
 ### 指定配置文件启动
+
 Nunu 使用 Viper 库来管理配置文件。
 
 默认会加载`config/local.yml`，你可以使用环境变量或参数来指定配置文件路径
@@ -157,12 +158,12 @@ APP_CONF=config/prod.yml nunu run
 set APP_CONF=config\prod.yml && nunu run
 
 ```
+
 或者使用传参的方式:`go run ./cmd/server -conf=config/prod.yml`
 
 ### 读取配置项
 
 您可以在 `config` 目录下创建一个名为 `local.yaml` 的文件来存储您的配置信息。例如：
-
 
 ```yaml
 data:
@@ -233,6 +234,7 @@ func NewRedis(conf *viper.Viper) *redis.Client {
 
 
 ```
+
 tips：通过参数进行依赖注入之后，别忘记执行`nunu wire`命令生成依赖文件。
 
 ## 日志
@@ -327,9 +329,8 @@ func (r *userRepository) FirstById(id int64) (*model.User, error) {
 
 这就是所谓的**面向接口编程**，它可以提高代码的灵活性、可扩展性、可测试性和可维护性，是Go语言非常推崇的一种编程风格。
 
-
-
 比如上面的代码我们写成了
+
 ```
 type UserRepository interface {
 	FirstById(id int64) (*model.User, error)
@@ -339,14 +340,16 @@ type userRepository struct {
 }
 
 ```
+
 而不是直接写成
+
 ```
 type UserRepository struct {
 	*Repository
 }
 ```
-> tips: Nunu高级Layout中的单元测试就是基于`interface`特性进行mock操作的。
 
+> tips: Nunu高级Layout中的单元测试就是基于`interface`特性进行mock操作的。
 
 ## 测试
 

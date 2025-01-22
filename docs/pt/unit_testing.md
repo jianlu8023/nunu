@@ -1,4 +1,5 @@
 ## Documentação
+
 * [Guia do Usuário](https://github.com/go-nunu/nunu/blob/main/docs/pt/guide.md)
 * [Arquitetura](https://github.com/go-nunu/nunu/blob/main/docs/pt/architecture.md)
 * [Tutorial de Início Rápido](https://github.com/go-nunu/nunu/blob/main/docs/pt/tutorial.md)
@@ -7,18 +8,20 @@
 - [Chinês](https://github.com/go-nunu/nunu/blob/main/docs/zh/unit_testing.md)
 - [Português](https://github.com/go-nunu/nunu/blob/main/docs/pt/unit_testing.md)
 
-
 # Testes Unitários
 
 ## Introdução
 
-Testes unitários são uma prática importante em projetos de desenvolvimento. No entanto, escrever testes unitários se torna complexo e instável quando o código testado depende de outros módulos ou componentes. Este artigo apresentará como usar mocks para escrever testes unitários concisos e eficientes.
+Testes unitários são uma prática importante em projetos de desenvolvimento. No entanto, escrever testes unitários se
+torna complexo e instável quando o código testado depende de outros módulos ou componentes. Este artigo apresentará como
+usar mocks para escrever testes unitários concisos e eficientes.
 
 ## Visão Geral
 
 Primeiro, vamos dar uma olhada no arquivo de injeção de dependência no projeto `cmd/server/wire.go`:
 
-> Dica: Este arquivo é compilado e gerado automaticamente pela ferramenta `google/wire` e não deve ser editado manualmente.
+> Dica: Este arquivo é compilado e gerado automaticamente pela ferramenta `google/wire` e não deve ser editado
+> manualmente.
 
 ```go
 // Injetores de wire.go:
@@ -45,6 +48,7 @@ Deste trecho de código, podemos ver as relações de dependência entre `handle
 `userHandler` depende de `userService`, e `userService` depende de `userRepository`.
 
 Por exemplo, o código para `GetProfile` em `handler/user.go` é o seguinte:
+
 ```go
 func (h *userHandler) GetProfile(ctx *gin.Context) {
 	userId := GetUserIdFromCtx(ctx)
@@ -62,42 +66,58 @@ func (h *userHandler) GetProfile(ctx *gin.Context) {
 	resp.HandleSuccess(ctx, user)
 }
 ```
+
 Podemos ver que ele chama internamente `userService.GetProfile`.
 
-Portanto, ao escrever testes unitários, inevitavelmente precisamos inicializar a instância de `userService` primeiro. No entanto, ao inicializarmos `userService`, descobrimos que ele depende de `userRepository`.
+Portanto, ao escrever testes unitários, inevitavelmente precisamos inicializar a instância de `userService` primeiro. No
+entanto, ao inicializarmos `userService`, descobrimos que ele depende de `userRepository`.
 
-Embora só precisemos testar o `handler` de nível inferior, precisamos inicializar e executar `service`, `repository` e outros códigos. Isso obviamente viola o princípio do teste unitário (Princípio da Responsabilidade Única), onde cada teste unitário deve se concentrar em uma funcionalidade ou unidade de código específica.
+Embora só precisemos testar o `handler` de nível inferior, precisamos inicializar e executar `service`, `repository` e
+outros códigos. Isso obviamente viola o princípio do teste unitário (Princípio da Responsabilidade Única), onde cada
+teste unitário deve se concentrar em uma funcionalidade ou unidade de código específica.
 
 Qual é a boa solução para este problema? Nossa resposta final é "mocking".
 
-
 ### Mocking (Um Bom Auxiliar para Isolamento de Dependências)
 
-Ao realizar testes unitários, queremos testar a lógica da unidade de código testada sem depender do estado ou comportamento de outros módulos ou componentes externos. Esta abordagem pode isolar melhor o código testado e tornar os testes mais confiáveis e repetíveis.
+Ao realizar testes unitários, queremos testar a lógica da unidade de código testada sem depender do estado ou
+comportamento de outros módulos ou componentes externos. Esta abordagem pode isolar melhor o código testado e tornar os
+testes mais confiáveis e repetíveis.
 
-Mocking é um padrão de teste usado para simular ou substituir módulos ou componentes externos dos quais o código testado depende. Ao usar objetos mock, podemos controlar o comportamento dos módulos externos, de modo que o código testado não precise realmente depender e chamar os módulos externos durante o teste, alcançando assim o isolamento do código testado.
+Mocking é um padrão de teste usado para simular ou substituir módulos ou componentes externos dos quais o código testado
+depende. Ao usar objetos mock, podemos controlar o comportamento dos módulos externos, de modo que o código testado não
+precise realmente depender e chamar os módulos externos durante o teste, alcançando assim o isolamento do código
+testado.
 
-Objetos mock podem simular valores de retorno, exceções, timeouts, etc., de módulos externos, tornando os testes mais controláveis e previsíveis. Ele resolve os seguintes problemas:
+Objetos mock podem simular valores de retorno, exceções, timeouts, etc., de módulos externos, tornando os testes mais
+controláveis e previsíveis. Ele resolve os seguintes problemas:
 
-1. Dependência de outros módulos: Algumas unidades de código podem depender de outros módulos, como bancos de dados, solicitações de rede, etc. Ao usar objetos mock, podemos simular essas dependências, para que os testes não precisem realmente depender desses módulos, evitando assim a instabilidade e complexidade dos testes.
+1. Dependência de outros módulos: Algumas unidades de código podem depender de outros módulos, como bancos de dados,
+   solicitações de rede, etc. Ao usar objetos mock, podemos simular essas dependências, para que os testes não precisem
+   realmente depender desses módulos, evitando assim a instabilidade e complexidade dos testes.
 
-2. Isolamento do ambiente externo: Algumas unidades de código podem ser afetadas pelo ambiente externo, como o tempo atual, status do sistema, etc. Ao usar objetos mock, podemos controlar o estado desses ambientes externos, para que os testes possam ser executados em diferentes ambientes, aumentando assim a cobertura e precisão dos testes.
+2. Isolamento do ambiente externo: Algumas unidades de código podem ser afetadas pelo ambiente externo, como o tempo
+   atual, status do sistema, etc. Ao usar objetos mock, podemos controlar o estado desses ambientes externos, para que
+   os testes possam ser executados em diferentes ambientes, aumentando assim a cobertura e precisão dos testes.
 
-3. Melhoria da eficiência dos testes: Alguns módulos externos podem realizar operações demoradas, como solicitações de rede, operações de leitura/escrita de arquivos, etc. Ao usar objetos mock, podemos evitar executar essas operações na realidade, melhorando assim a velocidade e eficiência de execução dos testes.
-
+3. Melhoria da eficiência dos testes: Alguns módulos externos podem realizar operações demoradas, como solicitações de
+   rede, operações de leitura/escrita de arquivos, etc. Ao usar objetos mock, podemos evitar executar essas operações na
+   realidade, melhorando assim a velocidade e eficiência de execução dos testes.
 
 No projeto nunu, usamos as seguintes bibliotecas de mocking para nos ajudar a escrever testes unitários:
 
-* github.com/golang/mock            // Uma biblioteca de mocking open-source do Google
-* github.com/go-redis/redismock/v9  // Fornece testes de mock para consultas Redis, compatível com github.com/redis/go-redis/v9
-* github.com/DATA-DOG/go-sqlmock    // sqlmock é uma biblioteca de mocking que implementa sql/driver
-
+* github.com/golang/mock // Uma biblioteca de mocking open-source do Google
+* github.com/go-redis/redismock/v9 // Fornece testes de mock para consultas Redis, compatível com
+  github.com/redis/go-redis/v9
+* github.com/DATA-DOG/go-sqlmock // sqlmock é uma biblioteca de mocking que implementa sql/driver
 
 ## Programação Orientada a Interfaces
 
-Usar `golang/mock` tem um pré-requisito. Precisamos seguir a abordagem de "programação orientada a interfaces" para escrever nosso `repository` e `service`.
+Usar `golang/mock` tem um pré-requisito. Precisamos seguir a abordagem de "programação orientada a interfaces" para
+escrever nosso `repository` e `service`.
 
-Alguns podem não estar familiarizados com o que significa "programação orientada a interfaces". Vamos pegar um trecho de código como exemplo:
+Alguns podem não estar familiarizados com o que significa "programação orientada a interfaces". Vamos pegar um trecho de
+código como exemplo:
 
 ```go
 package repository
@@ -130,7 +150,8 @@ func (r *userRepository) FirstById(id int64) (*model.User, error) {
 
 ```
 
-No código acima, primeiro definimos uma `UserRepository interface`, e então implementamos todos os seus métodos usando a `userRepository struct`.
+No código acima, primeiro definimos uma `UserRepository interface`, e então implementamos todos os seus métodos usando
+a `userRepository struct`.
 
 ```go
 type UserRepository interface {
@@ -144,7 +165,9 @@ func (r *userRepository) FirstById(id int64) (*model.User, error) {
 }
 
 ```
+
 Instead of directly writing it as:
+
 ```go
 type UserRepository struct {
 	*Repository
@@ -155,8 +178,8 @@ func (r *UserRepository) FirstById(id int64) (*model.User, error) {
 }
 ```
 
-A **programação orientada a interfaces**, que pode melhorar a flexibilidade, escalabilidade, testabilidade e manutenção do código, é um estilo de programação altamente recomendado pela linguagem Go.
-
+A **programação orientada a interfaces**, que pode melhorar a flexibilidade, escalabilidade, testabilidade e manutenção
+do código, é um estilo de programação altamente recomendado pela linguagem Go.
 
 ## Começando com go-mock
 
@@ -166,15 +189,17 @@ Usar o `golang/mock` é simples. Primeiro, vamos instalá-lo:
 go install github.com/golang/mock/mockgen@v1.6.0
 ```
 
-`mockgen` é uma ferramenta de linha de comando para `go-mock` que pode analisar as definições de `interface` em nosso código e gerar o código mock correto.
-
+`mockgen` é uma ferramenta de linha de comando para `go-mock` que pode analisar as definições de `interface` em nosso
+código e gerar o código mock correto.
 
 Exemplo:
+
 ```bash
 mockgen -source=internal/service/user.go -destination mocks/service/user.go
 ```
 
-O comando acima especifica dois parâmetros: o arquivo fonte da interface e o arquivo de destino onde o código mock gerado será colocado. Colocamos o arquivo alvo no diretório `mocks/service`.
+O comando acima especifica dois parâmetros: o arquivo fonte da interface e o arquivo de destino onde o código mock
+gerado será colocado. Colocamos o arquivo alvo no diretório `mocks/service`.
 
 Após gerar o código mock para `UserService`, podemos escrever testes unitários para `UserHandler`.
 
@@ -211,13 +236,17 @@ func TestUserHandler_GetProfile(t *testing.T) {
 
 ```
 
-O código fonte completo está localizado em: https://github.com/go-nunu/nunu-layout-advanced/blob/main/test/server/handler/user_test.go
+O código fonte completo está localizado
+em: https://github.com/go-nunu/nunu-layout-advanced/blob/main/test/server/handler/user_test.go
 
 ## sqlmock e redismock
 
-Para testes unitários de `repository`, que dependem não dos nossos próprios módulos de negócios, mas de fontes de dados externas como RPC, Redis e MySQL, é um pouco diferente de testar `handler` e `service`, pois precisamos evitar a conexão com bancos de dados e caches reais para reduzir incertezas nos testes. Portanto, também usamos mocks neste caso.
+Para testes unitários de `repository`, que dependem não dos nossos próprios módulos de negócios, mas de fontes de dados
+externas como RPC, Redis e MySQL, é um pouco diferente de testar `handler` e `service`, pois precisamos evitar a conexão
+com bancos de dados e caches reais para reduzir incertezas nos testes. Portanto, também usamos mocks neste caso.
 
 O código é o seguinte:
+
 ```go
 package repository
 
@@ -279,10 +308,11 @@ func TestUserRepository_GetByUsername(t *testing.T) {
 
 ```
 
-O código completo está localizado em: https://github.com/go-nunu/nunu-layout-advanced/blob/main/test/server/repository/user_test.go
-
+O código completo está localizado
+em: https://github.com/go-nunu/nunu-layout-advanced/blob/main/test/server/repository/user_test.go
 
 ## Cobertura de Testes
+
 Golang suporta nativamente a geração de relatórios de cobertura de testes.
 
 ```bash
@@ -291,7 +321,8 @@ go test -coverpkg=./internal/handler,./internal/service,./internal/repository -c
 go tool cover -html=./coverage.out -o coverage.html
 ```
 
-Os dois comandos acima gerarão um arquivo de relatório de cobertura `coverage.html` em um formato de visualização web, que pode ser aberto diretamente em um navegador.
+Os dois comandos acima gerarão um arquivo de relatório de cobertura `coverage.html` em um formato de visualização web,
+que pode ser aberto diretamente em um navegador.
 
 O efeito é o seguinte:
 
@@ -299,5 +330,10 @@ O efeito é o seguinte:
 
 ## Conclusão
 
-
-Testes unitários são uma prática de desenvolvimento importante em projetos, pois garantem a correção do código e fornecem validação automatizada. Ao conduzir testes unitários, precisamos usar programação orientada a interfaces e objetos mock para isolar as dependências do código testado. Na linguagem Go, podemos usar a biblioteca golang/mock para gerar código mock. Para repositórios que dependem de fontes de dados externas, podemos usar sqlmock e redismock para simular o comportamento de bancos de dados e caches. Ao usar objetos mock, podemos controlar o comportamento de módulos externos, permitindo que o código testado não dependa verdadeiramente e chame módulos externos durante os testes, alcançando assim a isolação do código testado. Isso melhora a confiabilidade, repetibilidade e eficiência dos testes.
+Testes unitários são uma prática de desenvolvimento importante em projetos, pois garantem a correção do código e
+fornecem validação automatizada. Ao conduzir testes unitários, precisamos usar programação orientada a interfaces e
+objetos mock para isolar as dependências do código testado. Na linguagem Go, podemos usar a biblioteca golang/mock para
+gerar código mock. Para repositórios que dependem de fontes de dados externas, podemos usar sqlmock e redismock para
+simular o comportamento de bancos de dados e caches. Ao usar objetos mock, podemos controlar o comportamento de módulos
+externos, permitindo que o código testado não dependa verdadeiramente e chame módulos externos durante os testes,
+alcançando assim a isolação do código testado. Isso melhora a confiabilidade, repetibilidade e eficiência dos testes.

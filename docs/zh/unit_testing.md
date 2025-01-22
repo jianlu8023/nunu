@@ -1,9 +1,9 @@
 ## 文档
+
 * [使用指南](https://github.com/go-nunu/nunu/blob/main/docs/zh/guide.md)
 * [分层架构](https://github.com/go-nunu/nunu/blob/main/docs/zh/architecture.md)
 * [详细教程](https://github.com/go-nunu/nunu/blob/main/docs/zh/tutorial.md)
 * [高效编写单元测试](https://github.com/go-nunu/nunu/blob/main/docs/zh/unit_testing.md)
-
 
 # 单元测试
 
@@ -42,6 +42,7 @@ func newApp(viperViper *viper.Viper, logger *log.Logger) (*gin.Engine, func(), e
 `userHandler`依赖于`userService`，而`userService`又依赖于`userRepository`。
 
 比如`handler/user.go`下面的`GetProfile`代码如下：
+
 ```
 func (h *userHandler) GetProfile(ctx *gin.Context) {
 	userId := GetUserIdFromCtx(ctx)
@@ -59,14 +60,16 @@ func (h *userHandler) GetProfile(ctx *gin.Context) {
 	v1.HandleSuccess(ctx, user)
 }
 ```
+
 我们会发现在它的内部调用了`userService.GetProfile`。
 
-因此在编写单元测试的时候，我们就不可避免的需要先初始化`userService`实例，而当我们去初始化`userService`的时候，我们又会发现它又依赖于`userRepository`。
+因此在编写单元测试的时候，我们就不可避免的需要先初始化`userService`实例，而当我们去初始化`userService`
+的时候，我们又会发现它又依赖于`userRepository`。
 
-明明我们只需要测试一个最底层的`handler`，却需要先初始化执行`service`、`repository`等代码。 这很明显违背了单元测试的（单一职责原则），每个单元测试只关注一个功能点或一个代码单元。
+明明我们只需要测试一个最底层的`handler`，却需要先初始化执行`service`、`repository`等代码。
+这很明显违背了单元测试的（单一职责原则），每个单元测试只关注一个功能点或一个代码单元。
 
 有什么比较好的办法解决该问题呢，我们的最终答案就是`mock`。
-
 
 ### Mock（依赖隔离好帮手）
 
@@ -82,12 +85,11 @@ Mock对象可以模拟外部模块的返回值、异常、超时等，使得测�
 
 3. 提高测试效率：某些外部模块可能执行耗时操作，例如网络请求、文件读写等。通过使用Mock对象，我们可以避免真实执行这些操作，从而提高测试的执行速度和效率。
 
-
 在nunu项目中，我们采用以下mock库来帮助我们编写单元测试
 
-* github.com/golang/mock            // google开源的mock库
-* github.com/go-redis/redismock/v9  // 提供redis查询的模拟测试，兼容github.com/redis/go-redis/v9
-* github.com/DATA-DOG/go-sqlmock    // sqlmock是一个实现sql/driver 的模拟库
+* github.com/golang/mock // google开源的mock库
+* github.com/go-redis/redismock/v9 // 提供redis查询的模拟测试，兼容github.com/redis/go-redis/v9
+* github.com/DATA-DOG/go-sqlmock // sqlmock是一个实现sql/driver 的模拟库
 
 ## 面向接口编程
 
@@ -127,6 +129,7 @@ func (r *userRepository) FirstById(id int64) (*model.User, error) {
 ```
 
 上面的代码中，我们先定义一个`UserRepository interface`,然后通过`userRepository struct`去实现它的所有方法。
+
 ```
 type UserRepository interface {
 	FirstById(id int64) (*model.User, error)
@@ -139,7 +142,9 @@ func (r *userRepository) FirstById(id int64) (*model.User, error) {
 }
 
 ```
+
 而不是直接写成
+
 ```
 type UserRepository struct {
 	*Repository
@@ -152,7 +157,6 @@ func (r *UserRepository) FirstById(id int64) (*model.User, error) {
 
 这就是所谓的**面向接口编程**，它可以提高代码的灵活性、可扩展性、可测试性和可维护性，是Go语言非常推崇的一种编程风格。
 
-
 ## go-mock快速上手
 
 `golang/mock`的使用其实简单，我们首先安装一下它：
@@ -163,8 +167,8 @@ go install github.com/golang/mock/mockgen@v1.6.0
 
 `mockgen`是`go-mock`的一个命令行工具，可以解析我们代码中的`interface`定义，自动生成正确的mock代码
 
-
 示例：
+
 ```
 mockgen -source=internal/service/user.go -destination mocks/service/user.go
 ```
@@ -206,7 +210,6 @@ func TestUserHandler_GetProfile(t *testing.T) {
 
 ```
 
-
 完整的源码位于： https://github.com/go-nunu/nunu-layout-advanced/blob/main/test/server/handler/user_test.go
 
 ## sqlmock与redismock
@@ -216,6 +219,7 @@ func TestUserHandler_GetProfile(t *testing.T) {
 这种情况下，为了避免连接真实的数据库和缓存，减少测试的不确定性，我们同样进行mock。
 
 代码如下
+
 ```
 package repository
 
@@ -279,8 +283,8 @@ func TestUserRepository_GetByUsername(t *testing.T) {
 
 完整代码位于：https://github.com/go-nunu/nunu-layout-advanced/blob/main/test/server/repository/user_test.go
 
-
 ## 测试覆盖率
+
 Golang官方原生支持生成测试覆盖率报告。
 
 ```
@@ -296,6 +300,5 @@ go tool cover -html=./coverage.out -o coverage.html
 ![coverage](https://github.com/go-nunu/nunu/blob/main/.github/assets/coverage.png)
 
 ## 总结
-
 
 单元测试在项目中是一种重要的开发实践，可以确保代码的正确性并提供自动化验证功能。在进行单元测试时，我们需要面向接口编程，使用mock对象来隔离被测代码的依赖关系。在Go语言中，我们可以使用golang/mock库来生成mock代码。对于依赖外部数据源的repository，我们可以使用sqlmock和redismock来模拟数据库和缓存的行为。通过使用mock对象，我们可以控制外部模块的行为，使得被测代码在测试过程中不会真正依赖和调用外部模块，从而实现对被测代码的隔离。这样可以提高测试的可靠性、可重复性和效率。

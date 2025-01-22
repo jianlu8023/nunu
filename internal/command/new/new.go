@@ -3,14 +3,15 @@ package new
 import (
 	"bytes"
 	"fmt"
-	"github.com/AlecAivazis/survey/v2"
 	"log"
 	"os"
 	"os/exec"
 	"path/filepath"
 
-	"github.com/go-nunu/nunu/config"
-	"github.com/go-nunu/nunu/internal/pkg/helper"
+	"github.com/AlecAivazis/survey/v2"
+
+	"gitee.com/jianlu8023/nunu/config"
+	"gitee.com/jianlu8023/nunu/internal/pkg/helper"
 	"github.com/spf13/cobra"
 )
 

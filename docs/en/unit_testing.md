@@ -1,15 +1,17 @@
 ## Documentation
+
 * [User Guide](https://github.com/go-nunu/nunu/blob/main/docs/en/guide.md)
 * [Architecture](https://github.com/go-nunu/nunu/blob/main/docs/en/architecture.md)
 * [Getting Started Tutorial](https://github.com/go-nunu/nunu/blob/main/docs/en/tutorial.md)
 * [Efficient Unit Testing](https://github.com/go-nunu/nunu/blob/main/docs/en/unit_testing.md)
 
-
 # Unit Testing
 
 ## Introduction
 
-Unit testing is an important development practice in projects. However, writing unit tests becomes complex and unstable when the tested code depends on other modules or components. This article will introduce how to use mocks to write concise and efficient unit tests.
+Unit testing is an important development practice in projects. However, writing unit tests becomes complex and unstable
+when the tested code depends on other modules or components. This article will introduce how to use mocks to write
+concise and efficient unit tests.
 
 ## Overview
 
@@ -42,6 +44,7 @@ From this code snippet, we can see the dependency relationships between `handler
 `userHandler` depends on `userService`, and `userService` depends on `userRepository`.
 
 For example, the code for `GetProfile` in `handler/user.go` is as follows:
+
 ```
 func (h *userHandler) GetProfile(ctx *gin.Context) {
 	userId := GetUserIdFromCtx(ctx)
@@ -59,40 +62,54 @@ func (h *userHandler) GetProfile(ctx *gin.Context) {
 	resp.HandleSuccess(ctx, user)
 }
 ```
+
 We can see that it calls `userService.GetProfile` internally.
 
-Therefore, when writing unit tests, we inevitably need to initialize the `userService` instance first. However, when we initialize `userService`, we find that it depends on `userRepository`.
+Therefore, when writing unit tests, we inevitably need to initialize the `userService` instance first. However, when we
+initialize `userService`, we find that it depends on `userRepository`.
 
-Although we only need to test the bottom-level `handler`, we need to initialize and execute `service`, `repository`, and other code. This obviously violates the principle of unit testing (Single Responsibility Principle), where each unit test should focus on a specific functionality or code unit.
+Although we only need to test the bottom-level `handler`, we need to initialize and execute `service`, `repository`, and
+other code. This obviously violates the principle of unit testing (Single Responsibility Principle), where each unit
+test should focus on a specific functionality or code unit.
 
 What is a good solution to this problem? Our ultimate answer is "mocking".
 
-
 ### Mocking (A Good Helper for Dependency Isolation)
 
-When conducting unit tests, we want to test the logic of the tested code unit without relying on the state or behavior of other external modules or components. This approach can better isolate the tested code and make the tests more reliable and repeatable.
+When conducting unit tests, we want to test the logic of the tested code unit without relying on the state or behavior
+of other external modules or components. This approach can better isolate the tested code and make the tests more
+reliable and repeatable.
 
-Mocking is a testing pattern used to simulate or replace external modules or components that the tested code depends on. By using mock objects, we can control the behavior of external modules, so that the tested code does not need to truly depend on and call the external modules during testing, thereby achieving isolation of the tested code.
+Mocking is a testing pattern used to simulate or replace external modules or components that the tested code depends on.
+By using mock objects, we can control the behavior of external modules, so that the tested code does not need to truly
+depend on and call the external modules during testing, thereby achieving isolation of the tested code.
 
-Mock objects can simulate the return values, exceptions, timeouts, etc. of external modules, making tests more controllable and predictable. It solves the following problems:
+Mock objects can simulate the return values, exceptions, timeouts, etc. of external modules, making tests more
+controllable and predictable. It solves the following problems:
 
-1. Dependency on other modules: Some code units may depend on other modules, such as databases, network requests, etc. By using mock objects, we can simulate these dependencies, so that tests do not need to truly depend on these modules, thereby avoiding the instability and complexity of tests.
+1. Dependency on other modules: Some code units may depend on other modules, such as databases, network requests, etc.
+   By using mock objects, we can simulate these dependencies, so that tests do not need to truly depend on these
+   modules, thereby avoiding the instability and complexity of tests.
 
-2. Isolation of the external environment: Some code units may be affected by the external environment, such as the current time, system status, etc. By using mock objects, we can control the state of these external environments, so that tests can run in different environments, thereby increasing the coverage and accuracy of tests.
+2. Isolation of the external environment: Some code units may be affected by the external environment, such as the
+   current time, system status, etc. By using mock objects, we can control the state of these external environments, so
+   that tests can run in different environments, thereby increasing the coverage and accuracy of tests.
 
-3. Improving test efficiency: Some external modules may perform time-consuming operations, such as network requests, file read/write operations, etc. By using mock objects, we can avoid executing these operations in reality, thereby improving the execution speed and efficiency of tests.
-
+3. Improving test efficiency: Some external modules may perform time-consuming operations, such as network requests,
+   file read/write operations, etc. By using mock objects, we can avoid executing these operations in reality, thereby
+   improving the execution speed and efficiency of tests.
 
 In the nunu project, we use the following mocking libraries to help us write unit tests:
 
-* github.com/golang/mock            // A mocking library open-sourced by Google
-* github.com/go-redis/redismock/v9  // Provides mock testing for Redis queries, compatible with github.com/redis/go-redis/v9
-* github.com/DATA-DOG/go-sqlmock    // sqlmock is a mocking library that implements sql/driver
-
+* github.com/golang/mock // A mocking library open-sourced by Google
+* github.com/go-redis/redismock/v9 // Provides mock testing for Redis queries, compatible with
+  github.com/redis/go-redis/v9
+* github.com/DATA-DOG/go-sqlmock // sqlmock is a mocking library that implements sql/driver
 
 ## Interface-Oriented Programming
 
-Using `golang/mock` has a prerequisite. We need to follow the "interface-oriented programming" approach to write our `repository` and `service`.
+Using `golang/mock` has a prerequisite. We need to follow the "interface-oriented programming" approach to write
+our `repository` and `service`.
 
 Some may not be familiar with what "interface-oriented programming" means. Let's take a code snippet as an example:
 
@@ -127,7 +144,9 @@ func (r *userRepository) FirstById(id int64) (*model.User, error) {
 
 ```
 
-In the above code, we first define a `UserRepository interface`, and then implement all its methods using the `userRepository struct`.
+In the above code, we first define a `UserRepository interface`, and then implement all its methods using
+the `userRepository struct`.
+
 ```
 type UserRepository interface {
 	FirstById(id int64) (*model.User, error)
@@ -140,7 +159,9 @@ func (r *userRepository) FirstById(id int64) (*model.User, error) {
 }
 
 ```
+
 Instead of directly writing it as:
+
 ```
 type UserRepository struct {
 	*Repository
@@ -151,8 +172,8 @@ func (r *UserRepository) FirstById(id int64) (*model.User, error) {
 }
 ```
 
-This is called **interface-oriented programming**, which can improve code flexibility, scalability, testability, and maintainability. It is a programming style highly recommended by the Go language.
-
+This is called **interface-oriented programming**, which can improve code flexibility, scalability, testability, and
+maintainability. It is a programming style highly recommended by the Go language.
 
 ## Getting Started with go-mock
 
@@ -162,15 +183,17 @@ Using `golang/mock` is actually simple. First, let's install it:
 go install github.com/golang/mock/mockgen@v1.6.0
 ```
 
-`mockgen` is a command-line tool for `go-mock` that can parse the `interface` definitions in our code and generate the correct mock code.
-
+`mockgen` is a command-line tool for `go-mock` that can parse the `interface` definitions in our code and generate the
+correct mock code.
 
 Example:
+
 ```
 mockgen -source=internal/service/user.go -destination mocks/service/user.go
 ```
 
-The above command specifies two parameters: the source file of the interface and the destination file where the generated mock code will be placed. We place the target file in the `mocks/service` directory.
+The above command specifies two parameters: the source file of the interface and the destination file where the
+generated mock code will be placed. We place the target file in the `mocks/service` directory.
 
 After generating the mock code for `UserService`, we can write unit tests for `UserHandler`.
 
@@ -207,14 +230,17 @@ func TestUserHandler_GetProfile(t *testing.T) {
 
 ```
 
-
-The complete source code is located at: https://github.com/go-nunu/nunu-layout-advanced/blob/main/test/server/handler/user_test.go
+The complete source code is located
+at: https://github.com/go-nunu/nunu-layout-advanced/blob/main/test/server/handler/user_test.go
 
 ## sqlmock and redismock
 
-For unit testing `repository`, which depends not on our own business modules but on external data sources such as RPC, Redis, and MySQL, it is slightly different from testing `handler` and `service` because we need to avoid connecting to real databases and caches to reduce test uncertainties. Therefore, we also use mocking in this case.
+For unit testing `repository`, which depends not on our own business modules but on external data sources such as RPC,
+Redis, and MySQL, it is slightly different from testing `handler` and `service` because we need to avoid connecting to
+real databases and caches to reduce test uncertainties. Therefore, we also use mocking in this case.
 
 The code is as follows:
+
 ```
 package repository
 
@@ -276,10 +302,11 @@ func TestUserRepository_GetByUsername(t *testing.T) {
 
 ```
 
-The complete code is located at: https://github.com/go-nunu/nunu-layout-advanced/blob/main/test/server/repository/user_test.go
-
+The complete code is located
+at: https://github.com/go-nunu/nunu-layout-advanced/blob/main/test/server/repository/user_test.go
 
 ## Test Coverage
+
 Golang natively supports generating test coverage reports.
 
 ```
@@ -288,7 +315,8 @@ go test -coverpkg=./internal/handler,./internal/service,./internal/repository -c
 go tool cover -html=./coverage.out -o coverage.html
 ```
 
-The above two commands will generate a coverage report file `coverage.html` in a web visualization format, which can be directly opened in a browser.
+The above two commands will generate a coverage report file `coverage.html` in a web visualization format, which can be
+directly opened in a browser.
 
 The effect is as follows:
 
@@ -296,5 +324,10 @@ The effect is as follows:
 
 ## Conclusion
 
-
-Unit testing is an important development practice in projects as it ensures code correctness and provides automated validation. When conducting unit tests, we need to use interface-oriented programming and mock objects to isolate the dependencies of the tested code. In the Go language, we can use the golang/mock library to generate mock code. For repositories that depend on external data sources, we can use sqlmock and redismock to simulate the behavior of databases and caches. By using mock objects, we can control the behavior of external modules, allowing the tested code to not truly depend on and call external modules during testing, thereby achieving isolation of the tested code. This improves the reliability, repeatability, and efficiency of tests.
+Unit testing is an important development practice in projects as it ensures code correctness and provides automated
+validation. When conducting unit tests, we need to use interface-oriented programming and mock objects to isolate the
+dependencies of the tested code. In the Go language, we can use the golang/mock library to generate mock code. For
+repositories that depend on external data sources, we can use sqlmock and redismock to simulate the behavior of
+databases and caches. By using mock objects, we can control the behavior of external modules, allowing the tested code
+to not truly depend on and call external modules during testing, thereby achieving isolation of the tested code. This
+improves the reliability, repeatability, and efficiency of tests.

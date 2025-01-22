@@ -2,16 +2,17 @@ package create
 
 import (
 	"fmt"
-	"github.com/duke-git/lancet/v2/strutil"
-	"github.com/go-nunu/nunu/internal/pkg/helper"
-	"github.com/go-nunu/nunu/tpl"
-	"github.com/spf13/cobra"
 	"log"
 	"os"
 	"path"
 	"path/filepath"
 	"strings"
 	"text/template"
+
+	"gitee.com/jianlu8023/nunu/internal/pkg/helper"
+	"gitee.com/jianlu8023/nunu/tpl"
+	"github.com/duke-git/lancet/v2/strutil"
+	"github.com/spf13/cobra"
 )
 
 type Create struct {
