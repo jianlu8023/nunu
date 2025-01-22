@@ -2,7 +2,9 @@ package nunu
 
 import (
 	"fmt"
+
 	"github.com/go-nunu/nunu/config"
+	"github.com/go-nunu/nunu/internal/command/clone"
 	"github.com/go-nunu/nunu/internal/command/wire"
 
 	"github.com/go-nunu/nunu/internal/command/create"
@@ -23,6 +25,7 @@ func init() {
 	CmdRoot.AddCommand(new.CmdNew)
 	CmdRoot.AddCommand(create.CmdCreate)
 	CmdRoot.AddCommand(run.CmdRun)
+	CmdRoot.AddCommand(clone.CmdClone)
 
 	CmdRoot.AddCommand(upgrade.CmdUpgrade)
 	create.CmdCreate.AddCommand(create.CmdCreateHandler)
