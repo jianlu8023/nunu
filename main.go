@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/go-nunu/nunu/cmd/nunu"
+	"gitee.com/jianlu8023/nunu/cmd/nunu"
 )
 
 func main() {

@@ -16,7 +16,7 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/go-nunu/nunu/config"
+	"gitee.com/jianlu8023/nunu/config"
 
 	"gitee.com/jianlu8023/nunu/internal/pkg/helper"
 	"github.com/AlecAivazis/survey/v2"
