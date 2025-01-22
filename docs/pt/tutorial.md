@@ -96,15 +96,15 @@ Em seguida, registre uma nova rota: `noAuthRouter.GET("/order", orderHandler.Get
 
 ```go
 func NewServerHTTP(
-	// ...
-	orderHandler *handler.OrderHandler,     // novo
+// ...
+orderHandler *handler.OrderHandler, // novo
 ) *gin.Engine {
-    // ...
+// ...
 
-	// No authentication routes
-	noAuthRouter := r.Group("/").Use(middleware.RequestLogMiddleware(logger))
-	{
-		noAuthRouter.GET("/order", orderHandler.GetOrderById)   // novo
+// No authentication routes
+noAuthRouter := r.Group("/").Use(middleware.RequestLogMiddleware(logger))
+{
+noAuthRouter.GET("/order", orderHandler.GetOrderById) // novo
 ```
 
 ## Escrevendo Provedores Wire
@@ -121,37 +121,37 @@ package main
 // ...
 
 var HandlerSet = wire.NewSet(
-	handler.NewHandler,
-	handler.NewUserHandler,
-
-	handler.NewOrderHandler, // novo
+    handler.NewHandler,
+    handler.NewUserHandler,
+    
+    handler.NewOrderHandler, // novo
 )
 
 var ServiceSet = wire.NewSet(
-	service.NewService,
-	service.NewUserService,
-
-	service.NewOrderService, // novo
+    service.NewService,
+    service.NewUserService,
+    
+    service.NewOrderService, // novo
 )
 
 var RepositorySet = wire.NewSet(
-	repository.NewDB,
-	repository.NewRedis,
-	repository.NewRepository,
-	repository.NewUserRepository,
-
-	repository.NewOrderRepository, // novo
+    repository.NewDB,
+    repository.NewRedis,
+    repository.NewRepository,
+    repository.NewUserRepository,
+    
+    repository.NewOrderRepository, // novo
 )
 
 func newApp(*viper.Viper, *log.Logger) (*gin.Engine, func(), error) {
-	panic(wire.Build(
-		ServerSet,
-		RepositorySet,
-		ServiceSet,
-		HandlerSet,
-		SidSet,
-		JwtSet,
-	))
+    panic(wire.Build(
+        ServerSet,
+        RepositorySet,
+        ServiceSet,
+        HandlerSet,
+        SidSet,
+        JwtSet,
+    ))
 }
 
 ```
@@ -170,27 +170,27 @@ Abra o arquivo `wire_gen.go`, e você verá que o código de dependência para `
 e `orderHandler` foi gerado automaticamente.
 
 ```go
-func NewApp(viperViper *viper.Viper, logger *log.Logger) (*gin.Engine, func(), error) {
-	jwt := middleware.NewJwt(viperViper)
-	handlerHandler := handler.NewHandler(logger)
-	sidSid := sid.NewSid()
-	serviceService := service.NewService(logger, sidSid, jwt)
-	db := repository.NewDB(viperViper)
-	client := repository.NewRedis(viperViper)
-	repositoryRepository := repository.NewRepository(db, client, logger)
-	userRepository := repository.NewUserRepository(repositoryRepository)
-	userService := service.NewUserService(serviceService, userRepository)
-	userHandler := handler.NewUserHandler(handlerHandler, userService)
-	
-	
-	orderRepository := repository.NewOrderRepository(repositoryRepository)
-	orderService := service.NewOrderService(serviceService, orderRepository)
-	orderHandler := handler.NewOrderHandler(handlerHandler, orderService)
-	
-	
-	engine := server.NewServerHTTP(logger, jwt, userHandler, orderHandler)
-	return engine, func() {
-	}, nil
+func NewApp(viperViper *viper.Viper, logger *log.Logger) (*gin.Engine, func (), error) {
+jwt := middleware.NewJwt(viperViper)
+handlerHandler := handler.NewHandler(logger)
+sidSid := sid.NewSid()
+serviceService := service.NewService(logger, sidSid, jwt)
+db := repository.NewDB(viperViper)
+client := repository.NewRedis(viperViper)
+repositoryRepository := repository.NewRepository(db, client, logger)
+userRepository := repository.NewUserRepository(repositoryRepository)
+userService := service.NewUserService(serviceService, userRepository)
+userHandler := handler.NewUserHandler(handlerHandler, userService)
+
+
+orderRepository := repository.NewOrderRepository(repositoryRepository)
+orderService := service.NewOrderService(serviceService, orderRepository)
+orderHandler := handler.NewOrderHandler(handlerHandler, orderService)
+
+
+engine := server.NewServerHTTP(logger, jwt, userHandler, orderHandler)
+return engine, func () {
+}, nil
 }
 
 ```
@@ -254,7 +254,7 @@ exemplo:
 // @Success 200 {object} response.Response
 // @Router /user [get]
 func (h *userHandler) GetProfile(ctx *gin.Context) {
-    // ...
+// ...
 }
 ```
 

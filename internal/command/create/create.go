@@ -9,9 +9,9 @@ import (
 	"strings"
 	"text/template"
 
-	"gitee.com/jianlu8023/nunu/internal/pkg/helper"
-	"gitee.com/jianlu8023/nunu/tpl"
 	"github.com/duke-git/lancet/v2/strutil"
+	"github.com/jianlu8023/nunu/internal/pkg/helper"
+	"github.com/jianlu8023/nunu/tpl"
 	"github.com/spf13/cobra"
 )
 

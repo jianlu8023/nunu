@@ -16,11 +16,11 @@ import (
 	"syscall"
 	"time"
 
-	"gitee.com/jianlu8023/nunu/config"
+	"github.com/jianlu8023/nunu/config"
 
-	"gitee.com/jianlu8023/nunu/internal/pkg/helper"
 	"github.com/AlecAivazis/survey/v2"
 	"github.com/fsnotify/fsnotify"
+	"github.com/jianlu8023/nunu/internal/pkg/helper"
 	"github.com/spf13/cobra"
 )
 

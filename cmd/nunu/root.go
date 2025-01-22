@@ -3,14 +3,14 @@ package nunu
 import (
 	"fmt"
 
-	"gitee.com/jianlu8023/nunu/config"
-	"gitee.com/jianlu8023/nunu/internal/command/clone"
-	"gitee.com/jianlu8023/nunu/internal/command/wire"
+	"github.com/jianlu8023/nunu/config"
+	"github.com/jianlu8023/nunu/internal/command/clone"
+	"github.com/jianlu8023/nunu/internal/command/wire"
 
-	"gitee.com/jianlu8023/nunu/internal/command/create"
-	"gitee.com/jianlu8023/nunu/internal/command/new"
-	"gitee.com/jianlu8023/nunu/internal/command/run"
-	"gitee.com/jianlu8023/nunu/internal/command/upgrade"
+	"github.com/jianlu8023/nunu/internal/command/create"
+	"github.com/jianlu8023/nunu/internal/command/new"
+	"github.com/jianlu8023/nunu/internal/command/run"
+	"github.com/jianlu8023/nunu/internal/command/upgrade"
 	"github.com/spf13/cobra"
 )
 

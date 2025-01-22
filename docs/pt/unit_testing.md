@@ -26,20 +26,20 @@ Primeiro, vamos dar uma olhada no arquivo de injeção de dependência no projet
 ```go
 // Injetores de wire.go:
 
-func newApp(viperViper *viper.Viper, logger *log.Logger) (*gin.Engine, func(), error) {
-	jwt := middleware.NewJwt(viperViper)
-	handlerHandler := handler.NewHandler(logger)
-	sidSid := sid.NewSid()
-	serviceService := service.NewService(logger, sidSid, jwt)
-	db := repository.NewDB(viperViper)
-	client := repository.NewRedis(viperViper)
-	repositoryRepository := repository.NewRepository(db, client, logger)
-	userRepository := repository.NewUserRepository(repositoryRepository)
-	userService := service.NewUserService(serviceService, userRepository)
-	userHandler := handler.NewUserHandler(handlerHandler, userService)
-	engine := server.NewServerHTTP(logger, jwt, userHandler)
-	return engine, func() {
-	}, nil
+func newApp(viperViper *viper.Viper, logger *log.Logger) (*gin.Engine, func (), error) {
+jwt := middleware.NewJwt(viperViper)
+handlerHandler := handler.NewHandler(logger)
+sidSid := sid.NewSid()
+serviceService := service.NewService(logger, sidSid, jwt)
+db := repository.NewDB(viperViper)
+client := repository.NewRedis(viperViper)
+repositoryRepository := repository.NewRepository(db, client, logger)
+userRepository := repository.NewUserRepository(repositoryRepository)
+userService := service.NewUserService(serviceService, userRepository)
+userHandler := handler.NewUserHandler(handlerHandler, userService)
+engine := server.NewServerHTTP(logger, jwt, userHandler)
+return engine, func () {
+}, nil
 }
 ```
 
@@ -51,19 +51,19 @@ Por exemplo, o código para `GetProfile` em `handler/user.go` é o seguinte:
 
 ```go
 func (h *userHandler) GetProfile(ctx *gin.Context) {
-	userId := GetUserIdFromCtx(ctx)
-	if userId == "" {
-		v1.HandleError(ctx, http.StatusUnauthorized, 1, "unauthorized", nil)
-		return
-	}
+userId := GetUserIdFromCtx(ctx)
+if userId == "" {
+v1.HandleError(ctx, http.StatusUnauthorized, 1, "unauthorized", nil)
+return
+}
 
-	user, err := h.userService.GetProfile(ctx, userId)
-	if err != nil {
-		v1.HandleError(ctx, http.StatusBadRequest, 1, err.Error(), nil)
-		return
-	}
+user, err := h.userService.GetProfile(ctx, userId)
+if err != nil {
+v1.HandleError(ctx, http.StatusBadRequest, 1, err.Error(), nil)
+return
+}
 
-	resp.HandleSuccess(ctx, user)
+resp.HandleSuccess(ctx, user)
 }
 ```
 
@@ -123,29 +123,28 @@ código como exemplo:
 package repository
 
 import (
-	"github.com/go-nunu/nunu-layout-advanced/internal/model"
+    "github.com/go-nunu/nunu-layout-advanced/internal/model"
 )
 
-
 type UserRepository interface {
-	FirstById(id int64) (*model.User, error)
+    FirstById(id int64) (*model.User, error)
 }
 type userRepository struct {
-	*Repository
+    *Repository
 }
 
 func NewUserRepository(repository *Repository) *UserRepository {
-	return &UserRepository{
-		Repository: repository,
-	}
+    return &UserRepository{
+        Repository: repository,
+    }
 }
 
 func (r *userRepository) FirstById(id int64) (*model.User, error) {
-	var user model.User
-	if err := r.db.Where("id = ?", id).First(&user).Error; err != nil {
-		return nil, err
-	}
-	return &user, nil
+    var user model.User
+    if err := r.db.Where("id = ?", id).First(&user).Error; err != nil {
+        return nil, err
+    }
+    return &user, nil
 }
 
 ```
@@ -155,13 +154,13 @@ a `userRepository struct`.
 
 ```go
 type UserRepository interface {
-	FirstById(id int64) (*model.User, error)
+FirstById(id int64) (*model.User, error)
 }
 type userRepository struct {
-	*Repository
+*Repository
 }
 func (r *userRepository) FirstById(id int64) (*model.User, error) {
-    // ...
+// ...
 }
 
 ```
@@ -170,11 +169,11 @@ Instead of directly writing it as:
 
 ```go
 type UserRepository struct {
-	*Repository
+*Repository
 }
 
 func (r *UserRepository) FirstById(id int64) (*model.User, error) {
-    // ...
+// ...
 }
 ```
 
@@ -208,30 +207,30 @@ O código final do teste unitário é o seguinte:
 ```go
 
 func TestUserHandler_GetProfile(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
+ctrl := gomock.NewController(t)
+defer ctrl.Finish()
 
-	mockUserService := mock_service.NewMockUserService(ctrl)
-	
-	// Key code, define o valor de retorno de mockUserService.GetProfile.
-	mockUserService.EXPECT().GetProfile(gomock.Any(), userId).Return(&model.User{
-		Id:       1,
-		UserId:   userId,
-		Username: "xxxxx",
-		Nickname: "xxxxx",
-		Password: "xxxxx",
-		Email:    "xxxxx@gmail.com",
-	}, nil)
+mockUserService := mock_service.NewMockUserService(ctrl)
 
-	router := setupRouter(mockUserService)
-	req, _ := http.NewRequest("GET", "/user", nil)
-	req.Header.Set("Authorization", "Bearer "+token)
-	resp := httptest.NewRecorder()
+// Key code, define o valor de retorno de mockUserService.GetProfile.
+mockUserService.EXPECT().GetProfile(gomock.Any(), userId).Return(&model.User{
+Id:       1,
+UserId:   userId,
+Username: "xxxxx",
+Nickname: "xxxxx",
+Password: "xxxxx",
+Email:    "xxxxx@gmail.com",
+}, nil)
 
-	router.ServeHTTP(resp, req)
+router := setupRouter(mockUserService)
+req, _ := http.NewRequest("GET", "/user", nil)
+req.Header.Set("Authorization", "Bearer "+token)
+resp := httptest.NewRecorder()
 
-	assert.Equal(t, resp.Code, http.StatusOK)
-	// Adicione asserções para o corpo da resposta, se necessário.
+router.ServeHTTP(resp, req)
+
+assert.Equal(t, resp.Code, http.StatusOK)
+// Adicione asserções para o corpo da resposta, se necessário.
 }
 
 ```
@@ -251,59 +250,58 @@ O código é o seguinte:
 package repository
 
 import (
-	"context"
-	"testing"
-	"time"
-
-	"github.com/DATA-DOG/go-sqlmock"
-	"github.com/go-nunu/nunu-layout-advanced/internal/model"
-	"github.com/go-nunu/nunu-layout-advanced/internal/repository"
-	"github.com/go-redis/redismock/v9"
-	"github.com/stretchr/testify/assert"
-	"gorm.io/driver/mysql"
-	"gorm.io/gorm"
+    "context"
+    "testing"
+    "time"
+    
+    "github.com/DATA-DOG/go-sqlmock"
+    "github.com/go-nunu/nunu-layout-advanced/internal/model"
+    "github.com/go-nunu/nunu-layout-advanced/internal/repository"
+    "github.com/go-redis/redismock/v9"
+    "github.com/stretchr/testify/assert"
+    "gorm.io/driver/mysql"
+    "gorm.io/gorm"
 )
 
 func setupRepository(t *testing.T) (repository.UserRepository, sqlmock.Sqlmock) {
-	mockDB, mock, err := sqlmock.New()
-	if err != nil {
-		t.Fatalf("failed to create sqlmock: %v", err)
-	}
-
-	db, err := gorm.Open(mysql.New(mysql.Config{
-		Conn:                      mockDB,
-		SkipInitializeWithVersion: true,
-	}), &gorm.Config{})
-	if err != nil {
-		t.Fatalf("failed to open gorm connection: %v", err)
-	}
-
-	rdb, _ := redismock.NewClientMock()
-
-	repo := repository.NewRepository(db, rdb, nil)
-	userRepo := repository.NewUserRepository(repo)
-
-	return userRepo, mock
+    mockDB, mock, err := sqlmock.New()
+    if err != nil {
+        t.Fatalf("failed to create sqlmock: %v", err)
+    }
+    
+    db, err := gorm.Open(mysql.New(mysql.Config{
+        Conn:                      mockDB,
+        SkipInitializeWithVersion: true,
+    }), &gorm.Config{})
+    if err != nil {
+        t.Fatalf("failed to open gorm connection: %v", err)
+    }
+    
+    rdb, _ := redismock.NewClientMock()
+    
+    repo := repository.NewRepository(db, rdb, nil)
+    userRepo := repository.NewUserRepository(repo)
+    
+    return userRepo, mock
 }
 
-
 func TestUserRepository_GetByUsername(t *testing.T) {
-	userRepo, mock := setupRepository(t)
-
-	ctx := context.Background()
-	username := "test"
-
+    userRepo, mock := setupRepository(t)
+    
+    ctx := context.Background()
+    username := "test"
+    
     // Simular a consulta de dados de teste.
-	rows := sqlmock.NewRows([]string{"id", "user_id", "username", "nickname", "password", "email", "created_at", "updated_at"}).
-		AddRow(1, "123", "test", "Test", "password", "test@example.com", time.Now(), time.Now())
-	mock.ExpectQuery("SELECT \\* FROM `users`").WillReturnRows(rows)
-
-	user, err := userRepo.GetByUsername(ctx, username)
-	assert.NoError(t, err)
-	assert.NotNil(t, user)
-	assert.Equal(t, "test", user.Username)
-
-	assert.NoError(t, mock.ExpectationsWereMet())
+    rows := sqlmock.NewRows([]string{"id", "user_id", "username", "nickname", "password", "email", "created_at", "updated_at"}).
+        AddRow(1, "123", "test", "Test", "password", "test@example.com", time.Now(), time.Now())
+    mock.ExpectQuery("SELECT \\* FROM `users`").WillReturnRows(rows)
+    
+    user, err := userRepo.GetByUsername(ctx, username)
+    assert.NoError(t, err)
+    assert.NotNil(t, user)
+    assert.Equal(t, "test", user.Username)
+    
+    assert.NoError(t, mock.ExpectationsWereMet())
 }
 
 ```

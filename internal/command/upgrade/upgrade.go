@@ -6,8 +6,8 @@ import (
 	"os"
 	"os/exec"
 
-	"gitee.com/jianlu8023/nunu/config"
 	"github.com/AlecAivazis/survey/v2"
+	"github.com/jianlu8023/nunu/config"
 	"github.com/spf13/cobra"
 )
 

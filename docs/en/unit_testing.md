@@ -117,29 +117,28 @@ Some may not be familiar with what "interface-oriented programming" means. Let's
 package repository
 
 import (
-	"github.com/go-nunu/nunu-layout-advanced/internal/model"
+    "github.com/go-nunu/nunu-layout-advanced/internal/model"
 )
 
-
 type UserRepository interface {
-	FirstById(id int64) (*model.User, error)
+    FirstById(id int64) (*model.User, error)
 }
 type userRepository struct {
-	*Repository
+    *Repository
 }
 
 func NewUserRepository(repository *Repository) *UserRepository {
-	return &UserRepository{
-		Repository: repository,
-	}
+    return &UserRepository{
+        Repository: repository,
+    }
 }
 
 func (r *userRepository) FirstById(id int64) (*model.User, error) {
-	var user model.User
-	if err := r.db.Where("id = ?", id).First(&user).Error; err != nil {
-		return nil, err
-	}
-	return &user, nil
+    var user model.User
+    if err := r.db.Where("id = ?", id).First(&user).Error; err != nil {
+        return nil, err
+    }
+    return &user, nil
 }
 
 ```

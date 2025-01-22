@@ -1,4 +1,4 @@
-module gitee.com/jianlu8023/nunu
+module github.com/jianlu8023/nunu
 
 go 1.16
 
