@@ -32,7 +32,7 @@ cd app  && nunu run
 ## 安装此nunu
 
 ```shell
-go install gitee.com/jianlu8023/nunu@latest
+go install github.com/jianlu8023/nunu@latest
 ```
 
 * [Nunu中文介绍](https://github.com/go-nunu/nunu/blob/main/README_zh.md)
