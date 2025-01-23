@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strings"
 
 	"github.com/AlecAivazis/survey/v2"
 
@@ -38,7 +39,7 @@ func NewProject() *Project {
 	return &Project{}
 }
 
-func run(cmd *cobra.Command, args []string) {
+func run(_ *cobra.Command, args []string) {
 	p := NewProject()
 	if len(args) == 0 {
 		err := survey.AskOne(&survey.Input{
@@ -68,6 +69,27 @@ func run(cmd *cobra.Command, args []string) {
 	if err != nil || !yes {
 		return
 	}
+
+	err = p.replaceDockerfile()
+	if err != nil || !yes {
+		return
+	}
+
+	err = p.replaceDockerfile()
+	if err != nil || !yes {
+		return
+	}
+
+	err = p.replaceMakefile()
+	if err != nil || !yes {
+		return
+	}
+
+	err = p.replaceMakefile()
+	if err != nil || !yes {
+		return
+	}
+
 	err = p.modTidy()
 	if err != nil || !yes {
 		return
@@ -215,6 +237,73 @@ func (p *Project) replaceFiles(packageName string) error {
 	})
 	if err != nil {
 		fmt.Println("walk file error: ", err)
+		return err
+	}
+	return nil
+}
+
+func (p *Project) replaceDockerfile() error {
+	packageName := helper.GetProjectName(p.ProjectName)
+
+	err := p.replaceCustomFiles(packageName, "Dockerfile")
+	if err != nil {
+		return err
+	}
+
+	cmd := exec.Command("go", "mod", "edit", "-module", p.ProjectName)
+	cmd.Dir = p.ProjectName
+	_, err = cmd.CombinedOutput()
+	if err != nil {
+		fmt.Println("go mod edit error: ", err)
+		return err
+	}
+	return nil
+}
+
+func (p *Project) replaceCustomFiles(packageName, needFile string) error {
+	err := filepath.Walk(p.ProjectName, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+		if info.IsDir() {
+			return nil
+		}
+		// if filepath.Ext(path) != ".go" {
+		//     return nil
+		// }
+		if !strings.HasSuffix(path, needFile) {
+			return nil
+		}
+		data, err := os.ReadFile(path)
+		if err != nil {
+			return err
+		}
+		newData := bytes.ReplaceAll(data, []byte(packageName), []byte(p.ProjectName))
+		if err := os.WriteFile(path, newData, 0644); err != nil {
+			return err
+		}
+		return nil
+	})
+	if err != nil {
+		fmt.Println("walk file error: ", err)
+		return err
+	}
+	return nil
+}
+
+func (p *Project) replaceMakefile() error {
+	packageName := helper.GetProjectName(p.ProjectName)
+
+	err := p.replaceCustomFiles(packageName, "Makefile")
+	if err != nil {
+		return err
+	}
+
+	cmd := exec.Command("go", "mod", "edit", "-module", p.ProjectName)
+	cmd.Dir = p.ProjectName
+	_, err = cmd.CombinedOutput()
+	if err != nil {
+		fmt.Println("go mod edit error: ", err)
 		return err
 	}
 	return nil
