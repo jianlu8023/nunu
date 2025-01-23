@@ -17,7 +17,9 @@ import (
 )
 
 type Project struct {
-	ProjectName string `survey:"name"`
+	// TemplateName 用于存储模板中的需替换的内容
+	TemplateName string `survey:"template"`
+	ProjectName  string `survey:"name"`
 }
 
 var CmdNew = &cobra.Command{
@@ -60,31 +62,31 @@ func run(_ *cobra.Command, args []string) {
 		return
 	}
 
+	// 第一次 替换
+	// packageName 是 模板中go.mod的module后面的名称 并将文件夹中的后缀是.go的文件进行替换
+	// 举例 模板中 go.mod文件中module 后面是 nunu-layout-basic 执行的命令是 nunu new demo-api
+	// 本次替换是将 demo-api文件夹中 所有后缀是.go的文件中的 nunu-layout-basic 替换为 demo-api
+	// 执行后 执行了 go mod edit -module p.Project[此时此值是demo-api]
 	err = p.replacePackageName()
 	if err != nil || !yes {
 		return
 	}
 
+	// 第二次 替换
+	// packageName 是 demo-api
+	// p.Project 是 demo-api
 	err = p.replacePackageName()
 	if err != nil || !yes {
 		return
 	}
 
+	fmt.Println("modify Dockerfile")
 	err = p.replaceDockerfile()
 	if err != nil || !yes {
 		return
 	}
 
-	err = p.replaceDockerfile()
-	if err != nil || !yes {
-		return
-	}
-
-	err = p.replaceMakefile()
-	if err != nil || !yes {
-		return
-	}
-
+	fmt.Println("modify Makefile")
 	err = p.replaceMakefile()
 	if err != nil || !yes {
 		return
@@ -171,12 +173,13 @@ func (p *Project) cloneTemplate() (bool, error) {
 		fmt.Printf("git clone %s error: %s\n", repo, err)
 		return false, err
 	}
+	templateName := helper.GetProjectName(p.ProjectName)
+	p.TemplateName = templateName
 	return true, nil
 }
 
 func (p *Project) replacePackageName() error {
 	packageName := helper.GetProjectName(p.ProjectName)
-
 	err := p.replaceFiles(packageName)
 	if err != nil {
 		return err
@@ -243,9 +246,8 @@ func (p *Project) replaceFiles(packageName string) error {
 }
 
 func (p *Project) replaceDockerfile() error {
-	packageName := helper.GetProjectName(p.ProjectName)
-
-	err := p.replaceCustomFiles(packageName, "Dockerfile")
+	// packageName := helper.GetProjectName(p.ProjectName)
+	err := p.replaceCustomFiles(p.TemplateName, "Dockerfile")
 	if err != nil {
 		return err
 	}
@@ -271,7 +273,7 @@ func (p *Project) replaceCustomFiles(packageName, needFile string) error {
 		// if filepath.Ext(path) != ".go" {
 		//     return nil
 		// }
-		if !strings.HasSuffix(path, needFile) {
+		if !strings.EqualFold(filepath.Base(path), needFile) {
 			return nil
 		}
 		data, err := os.ReadFile(path)
@@ -292,9 +294,8 @@ func (p *Project) replaceCustomFiles(packageName, needFile string) error {
 }
 
 func (p *Project) replaceMakefile() error {
-	packageName := helper.GetProjectName(p.ProjectName)
-
-	err := p.replaceCustomFiles(packageName, "Makefile")
+	// packageName := helper.GetProjectName(p.ProjectName)
+	err := p.replaceCustomFiles(p.TemplateName, "Makefile")
 	if err != nil {
 		return err
 	}
