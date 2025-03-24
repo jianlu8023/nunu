@@ -5,12 +5,13 @@ import (
 
 	"github.com/jianlu8023/nunu/config"
 	"github.com/jianlu8023/nunu/internal/command/clone"
+	"github.com/jianlu8023/nunu/internal/command/mycreate"
+	"github.com/jianlu8023/nunu/internal/command/run"
+	"github.com/jianlu8023/nunu/internal/command/upgrade"
 	"github.com/jianlu8023/nunu/internal/command/wire"
 
 	"github.com/jianlu8023/nunu/internal/command/create"
 	"github.com/jianlu8023/nunu/internal/command/new"
-	"github.com/jianlu8023/nunu/internal/command/run"
-	"github.com/jianlu8023/nunu/internal/command/upgrade"
 	"github.com/spf13/cobra"
 )
 
@@ -23,16 +24,24 @@ var CmdRoot = &cobra.Command{
 
 func init() {
 	CmdRoot.AddCommand(new.CmdNew)
-	CmdRoot.AddCommand(create.CmdCreate)
 	CmdRoot.AddCommand(run.CmdRun)
 	CmdRoot.AddCommand(clone.CmdClone)
-
 	CmdRoot.AddCommand(upgrade.CmdUpgrade)
+
+	CmdRoot.AddCommand(create.CmdCreate)
 	create.CmdCreate.AddCommand(create.CmdCreateHandler)
 	create.CmdCreate.AddCommand(create.CmdCreateService)
 	create.CmdCreate.AddCommand(create.CmdCreateRepository)
 	create.CmdCreate.AddCommand(create.CmdCreateModel)
 	create.CmdCreate.AddCommand(create.CmdCreateAll)
+
+	CmdRoot.AddCommand(mycreate.CmdMyCreate)
+	mycreate.CmdMyCreate.AddCommand(mycreate.CmdMyCreateRequest)
+	mycreate.CmdMyCreate.AddCommand(mycreate.CmdMyCreateModel)
+	mycreate.CmdMyCreate.AddCommand(mycreate.CmdMyCreateService)
+	mycreate.CmdMyCreate.AddCommand(mycreate.CmdMyCreateRepository)
+	mycreate.CmdMyCreate.AddCommand(mycreate.CmdMyCreateResponse)
+	mycreate.CmdMyCreate.AddCommand(mycreate.CmdMyCreateAll)
 
 	CmdRoot.AddCommand(wire.CmdWire)
 	wire.CmdWire.AddCommand(wire.CmdWireAll)
