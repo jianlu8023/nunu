@@ -1,8 +1,10 @@
 package {{ .PackageName }}
 
 import (
-	"github.com/gin-gonic/gin"
 	"fmt"
+	
+	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
 )
 
 // Param 请求参数
