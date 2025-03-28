@@ -3,6 +3,7 @@ package new
 import (
 	"bytes"
 	"fmt"
+	"io/fs"
 	"log"
 	"os"
 	"os/exec"
@@ -10,6 +11,7 @@ import (
 	"strings"
 
 	"github.com/AlecAivazis/survey/v2"
+	"github.com/jianlu8023/nunu/tpl"
 
 	"github.com/jianlu8023/nunu/config"
 	"github.com/jianlu8023/nunu/internal/pkg/helper"
@@ -88,6 +90,12 @@ func run(_ *cobra.Command, args []string) {
 
 	fmt.Println("modify Makefile")
 	err = p.replaceMakefile()
+	if err != nil || !yes {
+		return
+	}
+
+	fmt.Println("modify *.tpl")
+	err = p.replaceTpls()
 	if err != nil || !yes {
 		return
 	}
@@ -304,6 +312,38 @@ func (p *Project) replaceMakefile() error {
 	cmd.Dir = p.ProjectName
 	_, err = cmd.CombinedOutput()
 	if err != nil {
+		fmt.Println("go mod edit error: ", err)
+		return err
+	}
+	return nil
+}
+
+func (p *Project) replaceTpls() error {
+
+	var tplFiles []string
+	err := fs.WalkDir(tpl.MyCreateTemplateFS, ".", func(path string, dir fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+
+		if filepath.Ext(path) == ".tpl" {
+			tplFiles = append(tplFiles, filepath.Base(path))
+		}
+		return nil
+	})
+	if err != nil {
+		return err
+	}
+
+	for _, file := range tplFiles {
+		err = p.replaceCustomFiles(p.TemplateName, file)
+		if err != nil {
+			return err
+		}
+	}
+	cmd := exec.Command("go", "mod", "edit", "-module", p.ProjectName)
+	cmd.Dir = p.ProjectName
+	if _, err = cmd.CombinedOutput(); err != nil {
 		fmt.Println("go mod edit error: ", err)
 		return err
 	}
