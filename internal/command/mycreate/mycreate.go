@@ -2,6 +2,7 @@ package mycreate
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
 	"os"
@@ -186,12 +187,7 @@ func (c *MyCreate) genFile() {
 	if !strings.HasSuffix(filePath, "/") {
 		filePath = fmt.Sprintf("%s/", filePath)
 	}
-	f := createFile(filePath, strings.ToLower(c.CreateType)+".go")
-	if f == nil {
-		log.Printf("warn: file %s%s %s", filePath, strings.ToLower(c.CreateType)+".go", "already exists.")
-		return
-	}
-	defer f.Close()
+
 	var t *template.Template
 	var err error
 	if tplPath == "" {
@@ -200,8 +196,19 @@ func (c *MyCreate) genFile() {
 		t, err = template.ParseFiles(path.Join(tplPath, fmt.Sprintf("%s.tpl", c.CreateType)))
 	}
 	if err != nil {
+		if errors.Is(err, os.ErrNotExist) {
+			log.Fatalf("tpl file %s not exist,skip create %s", fmt.Sprintf("%s.tpl", c.CreateType), c.CreateType)
+			return
+		}
 		log.Fatalf("create %s error: %s", c.CreateType, err.Error())
 	}
+
+	f := createFile(filePath, strings.ToLower(c.CreateType)+".go")
+	if f == nil {
+		log.Printf("warn: file %s%s %s", filePath, strings.ToLower(c.CreateType)+".go", "already exists.")
+		return
+	}
+	defer f.Close()
 	err = t.Execute(f, c)
 	if err != nil {
 		log.Fatalf("create %s error: %s", c.CreateType, err.Error())
